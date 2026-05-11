@@ -1,0 +1,111 @@
+<div class="max-w-6xl mx-auto p-6 mt-10">
+    <div class="flex justify-between items-center mb-8">
+    <h2 class="text-3xl font-bold text-white">Creator Dashboard</h2>
+    
+    <div class="flex gap-4">
+        <button (click)="openEditModal()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors text-sm cursor-pointer flex items-center border border-gray-600">
+            ⚙️ Edit Profile
+        </button>
+
+        <a [routerLink]="['/profile', username]" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors text-sm cursor-pointer flex items-center">
+            View Public Profile
+        </a>
+
+        <a routerLink="/upload" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors text-sm cursor-pointer flex items-center">
+            + Upload New Model
+        </a>
+    </div>
+</div>
+    
+    <div *ngIf="isLoading" class="text-blue-400 bg-slate-800 p-8 rounded-lg text-center border border-slate-700 animate-pulse font-semibold">
+        Loading your inventory...
+    </div>
+
+    <div *ngIf="!isLoading && myModels.length === 0" class="text-slate-400 bg-slate-800 p-8 rounded-lg text-center border border-slate-700">
+        You haven't uploaded any 3D models yet. Time to start creating!
+    </div>
+
+    <div *ngIf="!isLoading && myModels.length > 0" class="bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
+        <table class="w-full text-left text-slate-300">
+            
+            <thead class="bg-slate-900 border-b border-slate-700">
+                <tr>
+                    <th class="p-4 font-semibold">Model</th>
+                    <th class="p-4 font-semibold">Price</th>
+                    <th class="p-4 font-semibold">Polys</th>
+                    <th class="p-4 font-semibold">Format</th>
+                    <th class="p-4 font-semibold text-right">Actions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr *ngFor="let model of myModels" class="border-b border-slate-700 hover:bg-slate-750 transition">
+                    
+                    <td class="p-4 flex items-center gap-4">
+                        <div class="w-16 h-16 bg-white rounded overflow-hidden border border-slate-600 flex-shrink-0">
+                             <model-viewer 
+                                [src]="model.modelFileUrl ? 'http://localhost:8080' + model.modelFileUrl : ''" 
+                                class="w-full h-full"
+                                style="pointer-events: none; outline: none;">
+                            </model-viewer>
+                        </div>
+                        <span class="font-bold text-white uppercase">{{ model.title }}</span>
+                    </td>
+                    
+                    <td class="p-4 text-blue-400 font-bold">${{ model.price }}</td>
+                    <td class="p-4">{{ model.polyCount }}</td>
+                    <td class="p-4">{{ model.fileFormat }}</td>
+                    
+                    <td class="p-4 text-right">
+                        <button (click)="onDelete(model.id, model.title)" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-sm font-semibold transition">
+                            Delete
+                        </button>
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div *ngIf="isEditingProfile" class="fixed inset-0 bg-black/80 z-50 flex justify-center items-center backdrop-blur-sm">
+    
+    <div class="bg-slate-800 border border-slate-700 p-8 rounded-xl w-full max-w-md shadow-2xl relative">
+        
+        <button (click)="closeEditModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">
+            &times;
+        </button>
+
+        <h3 class="text-2xl font-bold text-white mb-6">Edit Profile</h3>
+
+        <div class="mb-6 flex flex-col items-center">
+            <input type="file" #fileInput (change)="onProfileImageSelected($event)" accept="image/*" class="hidden">
+            
+            <div (click)="fileInput.click()" class="w-24 h-24 bg-slate-900 border-2 border-dashed border-slate-600 rounded-full flex items-center justify-center text-slate-400 mb-3 hover:border-blue-400 hover:text-blue-400 transition cursor-pointer overflow-hidden relative group">
+                <img *ngIf="profileImagePreview" [src]="profileImagePreview" class="w-full h-full object-cover">
+                <span *ngIf="!profileImagePreview" class="group-hover:scale-110 transition-transform">+ Image</span>
+            </div>
+            <p class="text-xs text-slate-500">Click to upload avatar</p>
+        </div>
+
+        <div class="mb-5">
+            <label class="block text-sm font-medium text-slate-300 mb-2">Creator Bio</label>
+            <textarea [(ngModel)]="editBio" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition" placeholder="Tell buyers about your 3D art style..."></textarea>
+        </div>
+
+        <div class="mb-8">
+            <label class="block text-sm font-medium text-slate-300 mb-2">PayPal Email (For Payouts)</label>
+            <input [(ngModel)]="editPaypal" type="email" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition" placeholder="payment@example.com">
+        </div>
+
+        <div class="flex justify-end gap-3">
+            <button (click)="closeEditModal()" class="px-5 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 font-medium transition">
+                Cancel
+            </button>
+            <button (click)="saveProfile()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg font-bold shadow-lg transition">
+                Save Changes
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  
+  <!-- Page Header -->
+  <div class="flex justify-between items-center mb-10">
+    <h2 class="text-3xl font-bold text-white tracking-tight">Discover 3D Models</h2>
+    
+    <!-- Sort Dropdown -->
+    <select class="bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none transition-colors">
+      <option>Trending</option>
+      <option>Lowest Price</option>
+      <option>Highest Price</option>
+    </select>
+  </div>
+
+  <!-- The Model Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    
+    <!-- 🔄 The Bulletproof *ngFor Loop -->
+    <div *ngFor="let model of filteredModels" (click)="viewDetail(model.id)" class="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-blue-500 hover:shadow-blue-900/20 transition-all duration-300 group cursor-pointer flex flex-col">
+      
+      <!-- Image & Price Tag -->
+      <div class="relative h-56 w-full bg-gray-900">
+        <div class="w-full h-full bg-gray-900 rounded-t-lg overflow-hidden relative">
+              <model-viewer 
+                  [src]="model.modelFileUrl ? 'http://localhost:8080' + model.modelFileUrl : fallback3DModel" 
+                  alt="3D model thumbnail"
+                  shadow-intensity="1"
+                  interaction-prompt="none"
+                  class="w-full h-full block rounded-t-lg"
+                  style="background-color: white; pointer-events: none; outline: none;">
+              </model-viewer>
+        </div>
+        <!-- Price Badge -->
+        <div class="absolute top-3 right-3 bg-blue-600/90 backdrop-blur-sm text-white text-sm font-bold px-3 py-1 rounded-full shadow-md">
+          ₹{{ model.price }}
+        </div>
+      </div>
+
+      <!-- Card Details -->
+      <div class="p-5 flex flex-col flex-grow">
+        <h3 class="text-lg font-bold text-gray-100 truncate">{{ model.title }}</h3>
+        <p class="text-gray-400 text-sm mt-1">by 
+            <a [routerLink]="['/profile', model.creator?.username]" (click)="$event.stopPropagation()" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors cursor-pointer">
+            {{ model.creator?.username }}
+            </a>
+        </p>
+        <!-- Spacer pushes the bottom section down -->
+        <div class="flex-grow"></div>
+        
+        <!-- Footer: Polys & View Button -->
+        <div class="flex justify-between items-center mt-5 pt-4 border-t border-gray-700">
+          <div class="text-gray-400 text-xs font-medium">
+            <span class="text-gray-500 mr-1">▲</span>
+            {{ model.polyCount }} polys
+          </div>
+          
+          <button class="text-sm bg-gray-700 group-hover:bg-blue-600 text-white font-semibold py-1.5 px-4 rounded transition-colors duration-300">
+            View
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

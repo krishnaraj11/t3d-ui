@@ -1,0 +1,71 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" *ngIf="model">
+  
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left Column: The 3D Viewer -->
+    <div class="lg:col-span-2 bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-2xl relative h-[600px]">
+      
+      <model-viewer 
+        [src]="model?.modelFileUrl ? 'http://localhost:8080' + model.modelFileUrl : fallback3DModel" 
+        alt="Interactive 3D model"
+        camera-controls 
+        auto-rotate
+        shadow-intensity="1"
+        class="w-full h-full rounded-lg"
+        style="background-color: white; cursor: grab;">
+      </model-viewer>
+
+      <!-- Overlay Tag -->
+      <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-md border border-gray-600">
+        Interactive 3D Preview
+      </div>
+    </div>
+
+    <!-- Right Column: Model Details & Purchase -->
+    <div class="flex flex-col space-y-6">
+      
+      <!-- Title & Price -->
+      <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+        <h1 class="text-3xl font-bold text-white mb-2">{{ model.title }}</h1>
+        <p class="text-gray-400 text-sm mt-1"> Uploaded by 
+            <a [routerLink]="['/profile', model.creator?.username]" (click)="$event.stopPropagation()" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors cursor-pointer">
+            {{ model.creator?.username }}
+            </a>
+        </p>
+        <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-6">
+          ₹{{ model.price }}
+        </div>
+
+        <button class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors flex justify-center items-center space-x-2">
+          <span>Add to Cart</span>
+        </button>
+      </div>
+
+      <!-- Tech Specs -->
+      <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex-grow">
+        <h3 class="text-lg font-bold text-white border-b border-gray-700 pb-3 mb-4">Specifications</h3>
+        
+        <ul class="space-y-4 text-sm">
+          <li class="flex justify-between">
+            <span class="text-gray-400">Geometry</span>
+            <span class="text-white font-medium">{{ model.polyCount }} Polygons</span>
+          </li>
+          <li class="flex justify-between">
+            <span class="text-gray-400">Format</span>
+            <span class="text-white font-medium">{{ model.fileFormat || 'FBX / GLB' }}</span>
+          </li>
+          <li class="flex justify-between">
+            <span class="text-gray-400">Description</span>
+            <span class="text-white font-medium text-right max-w-[200px]">{{ model.description || 'No description provided.' }}</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="!model" class="flex justify-center items-center h-96">
+  <div class="text-xl text-blue-500 font-bold animate-pulse">Loading 3D Engine...</div>
+</div>
